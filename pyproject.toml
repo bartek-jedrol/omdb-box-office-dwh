@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/omdb_box_office_dwh"]
+
+[project]
+name = "omdb-box-office-dwh"
+version = "0.1.0"
+description = "Box office Data Warehouse on Google Cloud Platform"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["python-dotenv>=1.2.3", "requests>=2.34.2"]
+
+[dependency-groups]
+dev = ["mypy>=2.3.1", "ruff>=0.16.7", "types-requests>=2.33.0.20260906"]
+
+[tool.mypy]
+ignore_missing_imports = true
+namespace_packages = true
+explicit_package_bases = true
