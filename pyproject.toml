@@ -11,14 +11,17 @@ version = "0.1.0"
 description = "Box office Data Warehouse on Google Cloud Platform"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["python-dotenv>=1.2.3", "requests>=2.34.2"]
+dependencies = [
+    "pandas>=3.0.5",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
+]
 
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
     "jupyter>=1.1.1",
     "mypy>=2.3.1",
-    "pandas>=3.0.5",
     "ruff>=0.16.7",
     "types-requests>=2.33.0.20260906",
 ]
