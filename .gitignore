@@ -39,4 +39,4 @@ override.tf.json
 terraform.rc
 
 # Dataform
-/dataform/.gitignore
+/dataform/.df-credentials.json
