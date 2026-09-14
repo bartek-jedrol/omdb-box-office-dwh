@@ -21,3 +21,23 @@ resource "google_bigquery_dataset" "datasets" {
     prevent_destroy = true
   }
 }
+
+resource "google_bigquery_table" "box_office" {
+  dataset_id          = google_bigquery_dataset.datasets["raw"].dataset_id
+  table_id            = "box_office"
+  project             = var.project_id
+  description         = "Daily box office CSV as delivered. All columns are STRING"
+  deletion_protection = false
+
+  external_data_configuration {
+    source_format = "CSV"
+    autodetect    = false
+    schema        = file("${path.module}/schemas/box_office.json")
+    source_uris   = ["gs://${google_storage_bucket.landing.name}/box_office/revenues_per_day.csv"]
+
+    csv_options {
+      quote             = "\""
+      skip_leading_rows = 1
+    }
+  }
+}

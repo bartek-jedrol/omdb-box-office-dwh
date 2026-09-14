@@ -1,0 +1,38 @@
+[
+  {
+    "name": "id",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Row identifier from the source file"
+  },
+  {
+    "name": "date",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Screening day as YYYY-MM-DD"
+  },
+  {
+    "name": "title",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Title as written in the source"
+  },
+  {
+    "name": "revenue",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Revenue for the title on that day"
+  },
+  {
+    "name": "theaters",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Number of theaters showing the title on that day"
+  },
+  {
+    "name": "distributor",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Distributor name"
+  }
+]
