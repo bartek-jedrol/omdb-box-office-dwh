@@ -1,0 +1,23 @@
+config {
+  type: "operations",
+  schema: "staging",
+  hasOutput: true,
+  description: "Replaces character codes such as u00e9 with the character they stand for: 'Les Misu00e9rables' -> 'Les Misérables'"
+}
+
+create or replace function ${self()}(title string) as ((
+
+  select
+    string_agg(
+      if(
+        regexp_contains(part, r"^u00[0-9a-f]{2}$"),
+        code_points_to_string([cast(concat('0x', substr(part, 4)) as int64)]),
+        part
+      ),
+      '' order by position
+    )
+
+  from unnest(regexp_extract_all(title, r"u00[0-9a-f]{2}|.")) as part
+    with offset as position
+
+))

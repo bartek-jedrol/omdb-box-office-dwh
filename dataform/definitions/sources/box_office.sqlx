@@ -1,0 +1,5 @@
+config {
+  type: "declaration",
+  schema: "raw",
+  description: "Daily box office rows exactly as delivered in the source CSV"
+}
