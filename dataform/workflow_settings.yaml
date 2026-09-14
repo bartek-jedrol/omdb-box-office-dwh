@@ -1,0 +1,5 @@
+dataformCoreVersion: 3.0.59
+defaultProject: omdb-box-office-dwh
+defaultLocation: europe-central2
+defaultDataset: staging
+defaultAssertionDataset: assertions
