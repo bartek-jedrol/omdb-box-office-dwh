@@ -1,0 +1,5 @@
+config {
+  type: "declaration",
+  schema: "raw",
+  description: "OMDb responses as fetched: one row per request with the request parameters, fetch time and the raw response"
+}
