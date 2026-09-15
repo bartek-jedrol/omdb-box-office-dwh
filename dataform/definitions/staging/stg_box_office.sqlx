@@ -1,0 +1,48 @@
+config {
+  type: "table",
+  schema: "staging",
+  description: "One row per title per screening day. Same rows as raw.box_office, with column types, missing values as NULL and a cleaned title for the OMDb request"
+}
+
+with
+
+source as (
+
+  select *
+
+  from ${ref("box_office")}
+
+),
+
+cleaned as (
+
+  select
+    source.id as row_id,
+    safe_cast(source.date as date) as screening_date,
+    source.title,
+    -- one cleaned title for the OMDb request; removes:
+    -- character codes ("Les Misu00e9rables" -> "Les Misérables")
+    -- a year in brackets at the end ("Vertigo (2018 re-release)" -> "Vertigo")
+    -- a year added to the title with everything after it
+    --   ("Avatar2022 Re-release" -> "Avatar")
+    trim(
+      regexp_replace(
+        regexp_replace(
+          ${ref("decode_char_codes")}(source.title),
+          r'\s*\(\d{4}[^)]*\)\s*$', ''
+        ),
+        r'([A-Za-z])\d{4}\b.*$', r'\1'
+      )
+    ) as clean_title,
+    safe_cast(source.revenue as int64) as revenue,
+    safe_cast(source.theaters as int64) as theaters_number,
+    -- "-" and "N/A" are two ways the source writes a missing distributor
+    if(
+      source.distributor in ("-", "N/A"), null, source.distributor
+    ) as distributor
+
+  from source
+
+)
+
+select * from cleaned
