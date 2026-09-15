@@ -1,0 +1,38 @@
+config {
+  type: "view",
+  schema: "intermediate",
+  description: "Requests without an answer in raw.omdb yet; the fetch script reads this view"
+}
+
+with
+
+requests as (
+
+  select distinct requested_title
+
+  from ${ref("int_title_requests")}
+
+),
+
+answered as (
+
+  select distinct requested_title
+
+  from ${ref("stg_omdb")}
+
+),
+
+to_fetch as (
+
+  select requests.requested_title
+
+  from requests
+
+  left join answered
+    on requests.requested_title = answered.requested_title
+
+  where answered.requested_title is null
+
+)
+
+select * from to_fetch
