@@ -1,0 +1,83 @@
+config {
+  type: "table",
+  schema: "mart",
+  description: "One row per film found in OMDb, plus -1 for titles OMDb did not find"
+}
+
+with
+
+found as (
+
+  select
+    requested_title,
+    json_value(response, '$.imdbID') as imdb_id,
+    json_value(response, '$.Title') as title,
+    safe_cast(json_value(response, '$.Year') as int64) as release_year,
+    -- OMDb writes dates like "10 Oct 2014"
+    safe.parse_date(
+      '%d %b %Y', json_value(response, '$.Released')
+    ) as released_on,
+    json_value(response, '$.Rated') as rating,
+    -- "99 min" -> 99
+    safe_cast(
+      regexp_replace(json_value(response, '$.Runtime'), ' min', '') as int64
+    ) as runtime_minutes,
+    json_value(response, '$.Director') as director,
+    json_value(response, '$.Country') as country,
+    safe_cast(json_value(response, '$.imdbRating') as float64) as imdb_rating,
+    -- "$1,270,847" -> 1270847
+    safe_cast(
+      regexp_replace(json_value(response, '$.BoxOffice'), r'[$,]', '') as int64
+    ) as box_office
+
+  from ${ref("stg_omdb")}
+
+  where found
+
+),
+
+keyed as (
+
+  select
+    row_number() over (order by requested_title) as movie_key,
+    requested_title,
+    imdb_id,
+    title,
+    release_year,
+    released_on,
+    rating,
+    runtime_minutes,
+    director,
+    country,
+    imdb_rating,
+    box_office
+
+  from found
+
+),
+
+with_unknown as (
+
+  select *
+
+  from keyed
+
+  union all
+
+  select
+    -1 as movie_key,
+    '(unresolved)' as requested_title,
+    cast(null as string) as imdb_id,
+    '(unresolved)' as title,
+    cast(null as int64) as release_year,
+    cast(null as date) as released_on,
+    cast(null as string) as rating,
+    cast(null as int64) as runtime_minutes,
+    cast(null as string) as director,
+    cast(null as string) as country,
+    cast(null as float64) as imdb_rating,
+    cast(null as int64) as box_office
+
+)
+
+select * from with_unknown
