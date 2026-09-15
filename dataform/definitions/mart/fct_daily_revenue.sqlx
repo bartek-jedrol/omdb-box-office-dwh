@@ -1,0 +1,49 @@
+config {
+  type: "table",
+  schema: "mart",
+  description: "One row per title per screening day with revenue and theaters; keys to date, movie and distributor, -1 when OMDb did not find the movie or the file has no distributor"
+}
+
+with
+
+box_office as (
+
+  select
+    row_id,
+    screening_date,
+    title,
+    clean_title,
+    revenue,
+    theaters_number,
+    distributor
+
+  from ${ref("stg_box_office")}
+
+),
+
+joined as (
+
+  select
+    box_office.row_id as row_id,
+    dim_date.date_key as date_key,
+    box_office.screening_date as screening_date,
+    coalesce(dim_movie.movie_key, -1) as movie_key,
+    coalesce(dim_distributor.distributor_key, -1) as distributor_key,
+    box_office.title,
+    box_office.revenue,
+    box_office.theaters_number
+
+  from box_office
+
+  left join ${ref("dim_date")} as dim_date
+    on box_office.screening_date = dim_date.date
+
+  left join ${ref("dim_movie")} as dim_movie
+    on box_office.clean_title = dim_movie.requested_title
+
+  left join ${ref("dim_distributor")} as dim_distributor
+    on box_office.distributor = dim_distributor.distributor_name
+
+)
+
+select * from joined
