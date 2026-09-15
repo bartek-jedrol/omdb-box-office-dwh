@@ -1,0 +1,20 @@
+[
+  {
+    "name": "request",
+    "type": "JSON",
+    "mode": "NULLABLE",
+    "description": "Query parameters sent to OMDb without the API key, e.g. {\"t\": \"Avatar\", \"type\": \"movie\"}"
+  },
+  {
+    "name": "fetched_at",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "When the response was received"
+  },
+  {
+    "name": "response",
+    "type": "JSON",
+    "mode": "NULLABLE",
+    "description": "Response body exactly as returned by OMDb, including Response=False for titles it did not find"
+  }
+]

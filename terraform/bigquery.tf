@@ -41,3 +41,18 @@ resource "google_bigquery_table" "box_office" {
     }
   }
 }
+
+resource "google_bigquery_table" "omdb" {
+  dataset_id          = google_bigquery_dataset.datasets["raw"].dataset_id
+  table_id            = "omdb"
+  project             = var.project_id
+  description         = "OMDb responses as fetched: one row per request, one file per batch"
+  deletion_protection = false
+
+  external_data_configuration {
+    source_format = "NEWLINE_DELIMITED_JSON"
+    autodetect    = false
+    schema        = file("${path.module}/schemas/omdb.json")
+    source_uris   = ["gs://${google_storage_bucket.landing.name}/omdb/*.ndjson"]
+  }
+}
