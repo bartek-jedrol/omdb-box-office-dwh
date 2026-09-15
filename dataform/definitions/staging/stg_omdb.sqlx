@@ -1,0 +1,22 @@
+config {
+  type: "view",
+  schema: "staging",
+  description: "One row per request from OMDb"
+}
+
+with
+
+source as (
+
+  select
+    json_value(request, '$.t') as requested_title,
+    json_value(request, '$.i') as requested_imdb_id,
+    fetched_at,
+    json_value(response, '$.Response') = 'True' as found,
+    response
+
+  from ${ref("omdb")}
+
+)
+
+select * from source
