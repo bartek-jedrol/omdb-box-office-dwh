@@ -1,0 +1,43 @@
+config {
+  type: "table",
+  schema: "mart",
+  description: "One row per distributor from the box office file, plus -1 for rows without one"
+}
+
+with
+
+distributors as (
+
+  select distinct distributor
+
+  from ${ref("stg_box_office")}
+
+  where distributor is not null
+
+),
+
+keyed as (
+
+  select
+    row_number() over (order by distributor) as distributor_key,
+    distributor as distributor_name
+
+  from distributors
+
+),
+
+with_unknown as (
+
+  select *
+
+  from keyed
+
+  union all
+
+  select
+    -1 as distributor_key,
+    '(unresolved)' as distributor_name
+
+)
+
+select * from with_unknown
