@@ -1,7 +1,7 @@
 config {
   type: "table",
   schema: "mart",
-  description: "One row per film found in OMDb, plus -1 for titles OMDb did not find"
+  description: "One row per movie found in OMDb, plus -1 for titles OMDb did not find"
 }
 
 with
