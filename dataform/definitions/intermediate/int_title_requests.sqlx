@@ -1,0 +1,29 @@
+config {
+  type: "table",
+  schema: "intermediate",
+  description: "One row per raw title with the cleaned title to send to OMDb; several raw titles can share one request"
+}
+
+with
+
+titles as (
+
+  select distinct
+    title,
+    clean_title
+
+  from ${ref("stg_box_office")}
+
+),
+
+requests as (
+
+  select
+    title,
+    clean_title as requested_title
+
+  from titles
+
+)
+
+select * from requests
