@@ -8,9 +8,9 @@ with
 
 requests as (
 
-  select distinct requested_title
+  select distinct clean_title as requested_title
 
-  from ${ref("int_title_requests")}
+  from ${ref("stg_box_office")}
 
 ),
 
