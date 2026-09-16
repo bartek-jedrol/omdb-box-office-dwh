@@ -23,7 +23,7 @@ date_parts as (
     extract(month from date) as month,
     -- Monday = 1 ... Sunday = 7
     mod(extract(dayofweek from date) + 5, 7) + 1 as day_of_week,
-    format_date('%A', date) as day_name
+    format_date('%a', date) as day_name
 
   from days
 
