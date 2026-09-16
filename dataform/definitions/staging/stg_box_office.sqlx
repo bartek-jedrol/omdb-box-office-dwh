@@ -38,7 +38,7 @@ cleaned as (
     safe_cast(source.theaters as int64) as theaters_number,
     -- "-" and "N/A" are two ways the source writes a missing distributor
     if(
-      source.distributor in ("-", "N/A"), null, source.distributor
+      source.distributor in ('-', 'N/A'), null, source.distributor
     ) as distributor
 
   from source
