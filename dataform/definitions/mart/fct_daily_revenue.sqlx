@@ -1,7 +1,12 @@
 config {
   type: "table",
   schema: "mart",
-  description: "One row per title per screening day with revenue and theaters; keys to date, movie and distributor, -1 when OMDb did not find the movie or the file has no distributor"
+  description: "One row per title per screening day with revenue and theaters; keys to date, movie and distributor, -1 when OMDb did not find the movie or the file has no distributor",
+  assertions: {
+    uniqueKey: ["row_id"],
+    nonNull: ["screening_date", "date_key", "movie_key", "distributor_key", "revenue"],
+    rowConditions: ["revenue >= 0"]
+  },
 }
 
 with
