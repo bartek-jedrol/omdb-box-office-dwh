@@ -1,0 +1,41 @@
+config {
+  type: "assertion",
+  schema: "assertions",
+  description: "Row count and total revenue in the fact must equal the raw box office file"
+}
+
+with
+
+raw as (
+
+  select
+    sum(safe_cast(revenue as int64)) as raw_total_revenue,
+    count(*) as raw_row_count
+
+  from ${ref("box_office")}
+
+),
+
+mart as (
+
+  select
+    sum(revenue) as mart_total_revenue,
+    count(*) as mart_row_count
+
+  from ${ref("fct_daily_revenue")}
+
+)
+
+select
+  raw.raw_total_revenue,
+  raw.raw_row_count,
+  mart.mart_total_revenue,
+  mart.mart_row_count
+
+from raw
+
+cross join mart
+
+where
+  raw.raw_total_revenue is distinct from mart.mart_total_revenue
+  or raw.raw_row_count is distinct from mart.mart_row_count
