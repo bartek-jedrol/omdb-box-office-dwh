@@ -1,0 +1,36 @@
+config {
+  type: "view",
+  schema: "mart",
+  description: "Fact rows with date, movie and distributor columns in one place. The dashboard reads this view"
+}
+
+with
+
+joined as (
+
+  select
+    fct_daily_revenue.screening_date as screening_date,
+    dim_date.year as year,
+    dim_date.month as month,
+    dim_date.day_of_week as day_of_week,
+    dim_movie.title as movie_title,
+    dim_movie.release_year as release_year,
+    dim_movie.imdb_rating as imdb_rating,
+    dim_distributor.distributor_name as distributor_name,
+    fct_daily_revenue.revenue as revenue,
+    fct_daily_revenue.theaters_number as theaters_number
+
+  from ${ref("fct_daily_revenue")} as fct_daily_revenue
+
+  inner join ${ref("dim_date")} as dim_date
+    on fct_daily_revenue.date_key = dim_date.date_key
+
+  inner join ${ref("dim_movie")} as dim_movie
+    on fct_daily_revenue.movie_key = dim_movie.movie_key
+
+  inner join ${ref("dim_distributor")} as dim_distributor
+    on fct_daily_revenue.distributor_key = dim_distributor.distributor_key
+
+)
+
+select * from joined
