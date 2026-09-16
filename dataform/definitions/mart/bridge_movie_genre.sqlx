@@ -1,0 +1,51 @@
+config {
+  type: "table",
+  schema: "mart",
+  description: "One row per movie and genre, because OMDb lists several genres per movie"
+}
+
+with
+
+movies as (
+
+  select
+    movie_key,
+    requested_title
+
+  from ${ref("dim_movie")}
+
+  where movie_key != -1
+
+),
+
+genres as (
+
+  select
+    requested_title,
+    json_value(response, '$.Genre') as genre_list
+
+  from ${ref("stg_omdb")}
+
+  where found
+
+),
+
+movie_genres as (
+
+  select
+    movies.movie_key,
+    trim(genre) as genre
+
+  from movies
+
+  inner join genres
+    on movies.requested_title = genres.requested_title
+
+  -- "Action, Crime, Drama" becomes three rows
+  cross join unnest(split(genres.genre_list, ', ')) as genre
+
+  where genres.genre_list != 'N/A'
+
+)
+
+select * from movie_genres
