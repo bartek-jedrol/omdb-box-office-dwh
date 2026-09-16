@@ -13,6 +13,7 @@ joined as (
     dim_date.year as year,
     dim_date.month as month,
     dim_date.day_of_week as day_of_week,
+    dim_date.day_name as day_name,
     dim_movie.title as movie_title,
     dim_movie.release_year as release_year,
     dim_movie.imdb_rating as imdb_rating,
