@@ -22,15 +22,11 @@ cleaned as (
     source.title,
     -- one cleaned title for the OMDb request; removes:
     -- character codes ("Les Misu00e9rables" -> "Les Misérables")
-    -- a year in brackets at the end ("Vertigo (2018 re-release)" -> "Vertigo")
     -- a year added to the title with everything after it
-    --   ("Avatar2022 Re-release" -> "Avatar")
+    --   ("Vertigo2018 Re-release" -> "Vertigo")
     trim(
       regexp_replace(
-        regexp_replace(
-          ${ref("decode_char_codes")}(source.title),
-          r'\s*\(\d{4}[^)]*\)\s*$', ''
-        ),
+        ${ref("decode_char_codes")}(source.title),
         r'([A-Za-z])\d{4}\b.*$', r'\1'
       )
     ) as clean_title,
