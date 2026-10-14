@@ -158,8 +158,9 @@ The order in which this project was built. It was not re-tested on a fresh proje
    ```bash
    mkdir -p data
    curl -L https://github.com/tjwaterman99/boxofficemojo-scraper/releases/latest/download/revenues_per_day.csv.gz | gunzip > data/revenues_per_day.csv
+   gcloud storage cp data/revenues_per_day.csv gs://<landing-bucket>/box_office/
    ```
-4. `dataform init-creds` and `dataform run` in `dataform/`, so the view for the fetch script exists. An empty `omdb/` prefix is fine: the external table returns no rows.
+4. Set `defaultProject` and `defaultLocation` in [`dataform/workflow_settings.yaml`](dataform/workflow_settings.yaml) to your project ID and region. Then `dataform init-creds` and `dataform run` in `dataform/`, so the view for the fetch script exists. An empty `omdb/` prefix is fine: the external table returns no rows.
 5. `uv run python src/omdb_box_office_dwh/fetch_movies.py`. An optional number limits the requests, for a smoke test.
 6. `dataform run` again: the full model with assertions.
 
