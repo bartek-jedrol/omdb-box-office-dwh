@@ -8,7 +8,8 @@ Stack: Cloud Storage, BigQuery, Dataform, Terraform, Python (uv), Looker Studio.
 
 Source data for the data warehouse comes from:
 
-1. CSV file with daily box office revenues (`data/revenues_per_day.csv`)
+1. CSV file with daily box office revenues (`data/revenues_per_day.csv`, not in the repo)
+   - Box Office Mojo data published as GitHub releases by [boxofficemojo-scraper](https://github.com/tjwaterman99/boxofficemojo-scraper). The [latest release](https://github.com/tjwaterman99/boxofficemojo-scraper/releases/latest/download/revenues_per_day.csv.gz) is a newer, bigger file; the numbers in this README and on the dashboard come from a release from March 2023.
    - One row per movie title per day (337 818 rows).
    - Date range: 2000-01-01 to 2023-03-06.
    - Columns: `id`, `date`, `title`, `revenue`, `theaters`, `distributor`.
@@ -152,7 +153,12 @@ The order in which this project was built. It was not re-tested on a fresh proje
 
 1. By hand: a GCP project with billing, a bucket for the Terraform state, `gcloud auth application-default login`, an OMDb API key in `.env` (see [`.env.example`](.env.example)).
 2. `terraform apply` in `terraform/` with your `terraform.tfvars` (see [`terraform.tfvars.example`](terraform/terraform.tfvars.example)). The output is the landing bucket name.
-3. Upload `revenues_per_day.csv` (not in the repo) to `box_office/` in the landing bucket.
+3. Download the CSV and upload it to `box_office/` in the landing bucket:
+
+   ```bash
+   mkdir -p data
+   curl -L https://github.com/tjwaterman99/boxofficemojo-scraper/releases/latest/download/revenues_per_day.csv.gz | gunzip > data/revenues_per_day.csv
+   ```
 4. `dataform init-creds` and `dataform run` in `dataform/`, so the view for the fetch script exists. An empty `omdb/` prefix is fine: the external table returns no rows.
 5. `uv run python src/omdb_box_office_dwh/fetch_movies.py`. An optional number limits the requests, for a smoke test.
 6. `dataform run` again: the full model with assertions.

@@ -18,7 +18,7 @@ __pycache__/
 # Source data
 /data/
 
-# Recruitment task materials
+# Local notes and scratch files
 /task/
 
 # Terraform
@@ -40,3 +40,6 @@ terraform.rc
 
 # Dataform
 /dataform/.df-credentials.json
+
+# Claude Code
+/.claude/
