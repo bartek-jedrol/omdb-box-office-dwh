@@ -13,6 +13,11 @@ variable "owner" {
   type        = string
 }
 
+variable "billing_account" {
+  description = "Billing account"
+  type        = string
+}
+
 variable "env" {
   description = "Environment label"
   type        = string
